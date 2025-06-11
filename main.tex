@@ -1,0 +1,58 @@
+\documentclass{article}
+
+\usepackage[most]{tcolorbox}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+ \usepackage{amsthm}
+ \usepackage{empheq}
+ \usepackage{mdframed}
+ \usepackage{hyperref}
+ \usepackage{booktabs}
+ \usepackage{lipsum}
+ \usepackage{soul}
+ \usepackage{color}
+ \usepackage{xcolor}
+ \usepackage{psfrag}
+ \usepackage{pgfplots}
+ \usepackage{chngcntr}
+ \usepackage{bm}
+ \usepackage{cancel}
+
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, margin=1in]{geometry} % Controla los márgenes
+\usepackage{titling}
+
+\title{Indice Espectral}
+\author{Angel Almonacid}
+\date{\today}
+
+\renewcommand{\maketitlehooka}{%
+  \centering
+  \vspace*{0.05cm} % Espacio vertical antes del título
+}
+
+\renewcommand{\maketitlehookd}{%
+  \vspace*{2cm} % Espacio vertical después de la fecha
+}
+
+\newcommand{\caja}[3]{%
+  \begin{tcolorbox}[colback=#1!5!white,colframe=#1!25!black,title=#2]
+    #3
+  \end{tcolorbox}%
+}
+
+\begin{document}
+\maketitle
+
+\begin{align*}
+  N_{;a}=\frac{\partial N }{\partial \phi^a}=\frac{\partial    }{\partial   \phi^a} \int \sqrt{\frac{1}{3}(\frac{1}{2}h_{ab} \dot \phi^a \dot \phi^b + V(\phi))}dt 
+\end{align*}
+
+
+
+\end{document}
