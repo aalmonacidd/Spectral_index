@@ -14,7 +14,8 @@ git subtree split -P $DIRECTORY -b $BRANCH || {
 }
 
 # Push con SSH forzado
-GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes" \
+
+GIT_SSH_COMMAND="ssh -i /home/aalmondd/.ssh/id_rsa -o IdentitiesOnly=yes"
 git push $REPO_URL $BRANCH:main --force || {
   echo "❌ Error en push SSH"
   exit 1
