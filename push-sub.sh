@@ -11,7 +11,7 @@ if ! ssh-add -l &>/dev/null; then
   # Pedir al usuario la ruta de su clave privada
  
 read -e -p "🔑 Escribe la ruta a tu clave privada SSH (default: ~/.ssh/id_rsa): " SSH_KEY_PATH
-SSH_KEY_PATH="${SSH_KEY_PATH:-~/.ssh/id_rsa}"
+SSH_KEY_PATH="${SSH_KEY_PATH:-/home/aalmondd/.ssh/id_rsa}"
 SSH_KEY_PATH=$(eval echo "$SSH_KEY_PATH")
 
 if [ ! -f "$SSH_KEY_PATH" ]; then
