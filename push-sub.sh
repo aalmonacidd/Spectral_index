@@ -1,46 +1,59 @@
 
 #!/bin/bash
 
-set -e  # Cualquier error hace que el script se detenga inmediatamente
+set -e  # Detener en caso de error
 
-# Ir a la raíz del repositorio
 cd "$(git rev-parse --show-toplevel)"
 
 DIRECTORY=MIE/indice_espectral
 BRANCH=indice-espectral-split
 REPO_URL=git@github.com:aalmonacidd/Spectral_index.git
 
-# ✅ Paso 0: Verificar conexión SSH con GitHub
-echo "🔒 Verificando autenticación SSH con GitHub..."
-if ! ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
-  echo "❌ No tienes autenticación SSH activa con GitHub."
-  echo "   Asegúrate de tener tu clave cargada con:"
-  echo "   ssh-add ~/.ssh/id_rsa  (o tu clave correspondiente)"
-  exit 1
-fi
-echo "✅ Autenticación SSH verificada."
+# ✅ Paso 0: Verificar si hay alguna clave cargada en el agente SSH
+if ! ssh-add -l &>/dev/null; then
+  echo "🔐 No hay claves SSH cargadas en tu sesión."
+  echo "📝 Por favor, selecciona o escribe la ruta de tu clave privada SSH:"
+  read -e -p "Ruta (default: ~/.ssh/id_rsa): " SSH_KEY_PATH
+  SSH_KEY_PATH=${SSH_KEY_PATH:-~/.ssh/id_rsa}
 
-# Paso 1: Verificar que la carpeta existe
+  # Expandir ~ manualmente
+  SSH_KEY_PATH="${SSH_KEY_PATH/#\~/$HOME}"
+
+  if [ ! -f "$SSH_KEY_PATH" ]; then
+    echo "❌ La clave '$SSH_KEY_PATH' no existe."
+    exit 1
+  fi
+
+  echo "🔑 Cargando clave SSH..."
+  ssh-add "$SSH_KEY_PATH" || {
+    echo "❌ No se pudo cargar la clave. Verifica tu passphrase."
+    exit 1
+  }
+else
+  echo "✅ Ya hay claves SSH cargadas."
+fi
+
+# Paso 1: Verificar carpeta
 if [ ! -d "$DIRECTORY" ]; then
   echo "❌ Carpeta '$DIRECTORY' no encontrada."
   exit 1
 fi
 
-# Paso 2: Verificar si hay cambios en esa carpeta
+# Paso 2: Verificar commits
 if git diff --quiet HEAD -- "$DIRECTORY"; then
-  echo "⚠️  No hay commits nuevos en '$DIRECTORY'. Se usará el estado actual (HEAD)."
+  echo "⚠️  No hay commits nuevos en '$DIRECTORY'. Usando HEAD."
   git subtree split -P "$DIRECTORY" HEAD -b "$BRANCH"
 else
-  echo "📦 Creando rama con los cambios nuevos..."
+  echo "📦 Creando rama con cambios nuevos..."
   git subtree split -P "$DIRECTORY" -b "$BRANCH"
 fi
 
-# Paso 3: Push usando el entorno SSH del usuario
-echo "🚀 Haciendo push al repositorio remoto..."
+# Paso 3: Push
+echo "🚀 Haciendo push al repo remoto..."
 git push "$REPO_URL" "$BRANCH:main" --force
 
-# Paso 4: Limpieza opcional
+# Paso 4: Limpiar
 git branch -D "$BRANCH"
 
-echo "✅ Push completado correctamente."
+echo "✅ Push completado con éxito."
 
